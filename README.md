@@ -235,6 +235,8 @@ The report contains three analytical pages.
 
 ### 1. Executive Overview
 
+![Executive Overview](screenshots/executive-overview.png)
+
 The Executive Overview provides a high-level view of procurement activity.
 
 It includes:
@@ -255,6 +257,8 @@ The page answers:
 
 ### 2. Supplier & Concentration
 
+![Supplier & Concentration](screenshots/supplier-concentration.png)
+
 This page focuses on supplier concentration and the relationship between commodity spend and supplier concentration.
 
 It includes:
@@ -273,6 +277,8 @@ The page answers:
 ---
 
 ### 3. ABC Analysis
+
+![ABC Analysis](screenshots/abc-analysis.png)
 
 The ABC Analysis page applies a spend-based ABC classification to commodities.
 
