@@ -1,45 +1,402 @@
-# Procurement Analytics Dashboard — Supplier & Purchasing Performance
-
-A Power BI procurement analytics project built using real public procurement data from the City of Austin.
-
-The dashboard analyzes **procurement spend, supplier concentration, commodity concentration, purchasing patterns, and data quality** to demonstrate how public procurement data can be transformed into actionable analytical insights.
-
-> **Project type:** Independent portfolio project
-> **Data source:** City of Austin Open Data
-> **Tool:** Microsoft Power BI
-> **Focus:** Procurement Analytics · Spend Analysis · Supplier Analysis · Supply Chain · Business Intelligence
-
----
+# Procurement Analytics Dashboard — Supplier & Spend Analysis
 
 ## Overview
 
-Procurement teams need visibility into where money is being spent, which suppliers and commodities account for the largest share of expenditure, and where concentration may warrant further investigation.
+This project is an independent procurement analytics case study built with real public procurement data from the City of Austin Open Data portal.
 
-This project uses a real public procurement dataset to build a structured analytical model and an interactive Power BI dashboard.
+The objective is to analyze purchasing spend, supplier concentration, commodity-level spend distribution, purchasing activity and data-quality limitations through an interactive Power BI dashboard.
 
-The analysis focuses on questions such as:
-
-* How much is being spent?
-* How has procurement spend evolved over time?
-* Which suppliers account for the largest share of spend?
-* How concentrated is spend across suppliers?
-* Which commodities account for most procurement expenditure?
-* Which commodities belong to the highest-spend ABC class?
-* Where does supplier concentration vary significantly by commodity?
-* What data-quality limitations affect the analysis?
-
-The project deliberately avoids creating unsupported procurement KPIs when the source data does not contain the necessary information.
+The project was developed as a portfolio project focused on **Procurement, Supply Chain and BI/Analytics** applications. It does not represent employment or professional experience with the City of Austin.
 
 ---
 
 ## Business Problem
 
-A procurement dataset may contain millions or hundreds of thousands of transaction-level records, but raw transaction data alone does not provide an effective management view.
+Procurement teams need visibility into how purchasing spend is distributed across suppliers and commodities in order to identify areas that may require deeper analysis and prioritization.
 
-The objective of this project was to transform procurement transaction data into a dashboard that helps users:
+This project addresses three main questions:
 
-1. Understand overall procurement expenditure.
-2. Identify major suppliers and supplier concentration.
+### Supplier Management
+
+**How concentrated is procurement spend across suppliers?**
+
+The analysis examines supplier spend shares and concentration at both the overall procurement level and within individual commodities.
+
+### Spend Management
+
+**Which commodities account for the largest share of procurement spend?**
+
+Commodity-level analysis identifies the categories with the highest financial impact and supports spend prioritization.
+
+### Analytical Prioritization
+
+**Where should procurement analysts focus their attention based on spend concentration?**
+
+ABC analysis is used to classify commodities according to their cumulative contribution to total spend.
+
+---
+
+## What I Built
+
+The project covers the complete analytical workflow from raw procurement data to business insights:
+
+* designed a dimensional procurement data model using a Star Schema;
+* cleaned and structured the source data in Power Query;
+* developed DAX measures for procurement and supplier analysis;
+* analyzed supplier spend and concentration;
+* analyzed commodity-level spend distribution;
+* implemented an ABC spend classification;
+* investigated data-quality limitations affecting Quantity;
+* built an interactive Power BI dashboard;
+* translated analytical results into procurement-oriented insights;
+* documented the methodology, model and limitations.
+
+---
+
+## Dataset
+
+**Source:** City of Austin Open Data — *Purchase Order Quantity & Price Detail for Commodity/Goods Procurements*
+
+The dataset contains public procurement transaction records including purchase orders, commodities, suppliers, quantities and prices.
+
+The analysis uses the dataset as an independent public-data case study.
+
+### Analytical Grain
+
+The fundamental grain of the dataset used in this project is:
+
+> **One purchase order × one commodity line**
+
+Because a purchase order may contain multiple lines, purchase order counts are calculated using distinct purchase order identifiers rather than simply counting rows.
+
+---
+
+## Project Scope
+
+### Included
+
+* Total procurement spend
+* Purchase order volume
+* Supplier count
+* Average purchase order value
+* Spend evolution over time
+* Supplier spend concentration
+* Supplier ranking
+* Commodity spend ranking
+* Commodity spend share
+* Supplier concentration within commodities
+* ABC commodity classification
+* Purchase-line structure
+* Quantity data-quality analysis
+
+### Not Included
+
+The dataset does not provide sufficiently reliable information to calculate several operational procurement performance indicators.
+
+Therefore, this project does **not** claim to measure:
+
+* On-Time In-Full (OTIF)
+* Supplier delivery performance
+* Lead time
+* Procurement savings
+* Negotiated savings
+* Supplier quality performance
+* Supplier risk
+* Purchase order cycle time
+
+These limitations are treated as part of the analytical findings rather than being replaced with synthetic assumptions.
+
+---
+
+## Data Model
+
+The Power BI model follows a Star Schema:
+
+```text
+                    DimVendor
+                        |
+                        |
+DimDate -------- FactPurchase -------- DimCommodity
+```
+
+### Fact Table
+
+**FactPurchase**
+
+Contains procurement transaction lines at the Purchase Order × Commodity Line grain.
+
+### Dimension Tables
+
+* **DimVendor** — supplier analysis
+* **DimCommodity** — commodity analysis
+* **DimDate** — time-based analysis
+
+---
+
+## Key Metrics
+
+Examples of the main measures developed in DAX include:
+
+```DAX
+Total Spend = SUM(FactPurchase[Spend])
+
+PO Count =
+DISTINCTCOUNT(FactPurchase[PurchaseOrder])
+
+Supplier Count =
+DISTINCTCOUNT(FactPurchase[VendorCode])
+
+Average PO Value =
+DIVIDE([Total Spend], [PO Count])
+```
+
+Additional measures were developed for:
+
+* supplier spend share;
+* supplier ranking;
+* commodity ranking;
+* commodity spend share;
+* supplier concentration within commodities;
+* average lines per purchase order;
+* average spend per line;
+* zero-quantity lines;
+* spend associated with zero quantity;
+* spend associated with positive quantity;
+* ABC cumulative spend.
+
+---
+
+## Dashboard
+
+The dashboard consists of three analytical pages.
+
+### 1. Executive Overview
+
+Provides a high-level view of procurement activity, including:
+
+* Total Spend
+* Purchase Order Count
+* Supplier Count
+* Average Purchase Order Value
+* Spend evolution over time
+* Top suppliers by spend
+* Top commodities by spend
+
+![Executive Overview](screenshots/executive-overview.png)
+
+---
+
+### 2. Supplier & Concentration
+
+Focuses on supplier spend distribution and concentration.
+
+Key analyses include:
+
+* Top suppliers by spend
+* Supplier share of total spend
+* Overall supplier concentration
+* Supplier concentration within commodities
+
+![Supplier & Concentration](screenshots/supplier-concentration.png)
+
+---
+
+### 3. ABC Analysis
+
+Classifies commodities according to cumulative spend contribution.
+
+The page includes:
+
+* Pareto analysis
+* Top commodities by spend
+* ABC classification
+* Commodity-level analytical detail
+
+![ABC Analysis](screenshots/abc-analysis.png)
+
+---
+
+## Key Findings
+
+### 1. Spend is highly concentrated across commodities
+
+The dataset contains **10,653 commodities**.
+
+Only **171 commodities**, approximately **1.61%** of the commodity portfolio, account for approximately **80% of total spend**.
+
+This indicates that a relatively small portion of the commodity portfolio represents the majority of financial exposure and may therefore warrant greater analytical attention.
+
+---
+
+### 2. Supplier concentration is distributed across a broad supplier base
+
+Supplier concentration at the overall procurement level was measured as follows:
+
+| Supplier Group      | Share of Total Spend |
+| ------------------- | -------------------: |
+| Top 1               |                3.79% |
+| Top 5               |               15.47% |
+| Top 10              |               26.15% |
+| Top 20              |               38.11% |
+| Remaining Suppliers |               61.89% |
+
+Supplier concentration also varies considerably between individual commodities.
+
+Importantly, **supplier concentration alone does not establish supplier risk**. Additional information such as supplier criticality, alternatives, substitutability and capacity would be required for a formal supplier-risk assessment.
+
+---
+
+### 3. Purchasing activity consists of a large number of relatively small transaction structures
+
+The dataset contains approximately:
+
+* **166,919 purchase orders**
+* **319,186 purchase lines**
+
+This corresponds to approximately **1.91 purchase lines per purchase order**.
+
+Average spend per purchase line is approximately **$12,609**.
+
+---
+
+### 4. Quantity requires careful interpretation
+
+The analysis identified:
+
+* **107,635 purchase lines** with recorded Quantity = 0;
+* approximately **$1.948B** of spend associated with zero-quantity lines;
+* approximately **$2.076B** of spend associated with positive-quantity lines.
+
+This means that a substantial portion of total spend is associated with lines where Quantity is recorded as zero.
+
+As a result, **Spend is treated as the primary financial measure**, while Quantity is treated as a supplementary field that requires caution when interpreted as a volume indicator.
+
+---
+
+## Spend Evolution
+
+Annual procurement spend observed in the dataset:
+
+| Year | Spend |
+| ---- | ----: |
+| 2016 | $193M |
+| 2017 | $173M |
+| 2018 | $233M |
+| 2019 | $258M |
+| 2020 | $257M |
+| 2021 | $329M |
+| 2022 | $271M |
+| 2023 | $326M |
+| 2024 | $323M |
+| 2025 | $377M |
+
+Annual comparisons should be interpreted in the context of the date coverage available in the source dataset. In particular, the completeness of the latest period should be verified before treating it as directly comparable with full historical years.
+
+---
+
+## Methodology
+
+The project followed a structured analytical workflow:
+
+1. Define the procurement business questions.
+2. Obtain the public procurement dataset.
+3. Clean and transform the data using Power Query.
+4. Establish a Star Schema.
+5. Create DAX measures.
+6. Analyze procurement spend and purchasing activity.
+7. Analyze supplier concentration.
+8. Perform commodity-level ABC analysis.
+9. Investigate data-quality limitations.
+10. Build the Power BI dashboard.
+11. Translate findings into procurement-oriented insights.
+12. Document the methodology and limitations.
+
+---
+
+## Data Quality & Limitations
+
+Several limitations were identified during the analysis.
+
+### Quantity
+
+A significant amount of spend is associated with records where Quantity is zero.
+
+Therefore, Quantity should not be treated as a universally reliable measure of procurement volume.
+
+### Procurement Performance
+
+The dataset does not contain sufficiently reliable fields to calculate operational metrics such as OTIF, lead time or supplier quality.
+
+### Savings
+
+There is no reliable baseline-versus-actual price structure that would support a defensible calculation of procurement savings.
+
+### Supplier Risk
+
+Supplier concentration can identify areas for further investigation, but concentration alone is not equivalent to supplier risk.
+
+### Public Dataset Context
+
+The dataset represents historical public procurement transactions. The analysis should therefore be interpreted as a procurement analytics case study rather than as an assessment of current City of Austin procurement performance.
+
+---
+
+## Tools & Technologies
+
+* **Power BI**
+* **Power Query**
+* **DAX**
+* **Star Schema / Dimensional Modeling**
+* **Data Quality Analysis**
+* **Procurement Analytics**
+* **ABC / Pareto Analysis**
+
+---
+
+## Project Structure
+
+```text
+procurement-analytics-dashboard/
+├── README.md
+├── screenshots/
+│   ├── executive-overview.png
+│   ├── supplier-concentration.png
+│   └── abc-analysis.png
+└── documentation/
+    └── data-dictionary.md
+```
+
+---
+
+## Future Improvements
+
+Potential extensions could include:
+
+* additional supplier segmentation;
+* commodity-level supplier dependency analysis;
+* price-variation analysis where the source data supports it;
+* more detailed temporal analysis;
+* additional procurement KPIs if suitable source data becomes available;
+* integration with other public procurement datasets.
+
+Any future extension should preserve the same principle of using metrics that are supported by the underlying data rather than introducing unsupported assumptions.
+
+---
+
+## Project Purpose
+
+This project was developed as a portfolio case study to demonstrate practical skills in:
+
+* Procurement Analytics
+* Supply Chain Analytics
+* Business Intelligence
+* Data Modeling
+* Power BI
+* DAX
+* Data Quality Analysis
+* Analytical Storytelling
+
+The focus is not only on building a dashboard, but on transforming real-world procurement data into structured analysis while explicitly identifying the limitations and assumptions that affect interpretation.
 3. Identify high-spend commodities.
 4. Prioritize commodities using ABC analysis.
 5. Investigate supplier concentration within individual commodities.
